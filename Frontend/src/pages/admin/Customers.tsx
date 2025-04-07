@@ -1,9 +1,18 @@
-import { ReactElement } from "react";
-import AdminSidebar from "../../components/admin/AdminSidebar";
-import { Column } from "react-table";
-import { useState, useCallback } from "react";
-import TableHOC from "../../components/admin/TableHOC";
+import { ReactElement, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { FaTrash } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { Column } from "react-table";
+import AdminSidebar from "../../components/admin/AdminSidebar";
+import TableHOC from "../../components/admin/TableHOC";
+import { Skeleton } from "../../components/Loader";
+import {
+  useAllUsersQuery,
+  useDeleteUserMutation,
+} from "../../redux/api/userAPI";
+import { RootState } from "../../redux/store";
+import { CustomError } from "../../types/api-types";
+import { responseToast } from "../../utils/features";
 
 interface DataType {
   avatar: ReactElement;
@@ -40,76 +49,66 @@ const columns: Column<DataType>[] = [
     accessor: "action",
   },
 ];
-const img = "https://randomuser.me/api/portraits/women/54.jpg";
-const img2 = "https://randomuser.me/api/portraits/women/50.jpg";
-
-
-const arr: DataType[] = [
-  {
-    avatar: (
-      <img
-        style={{
-          borderRadius: "50%",
-        }}
-        src={img}
-        alt="Shoes"
-      />
-    ),
-    name: "Emily Palmer",
-    email: "emily.palmer@example.com",
-    gender: "Female",
-    role: "User",
-    action: (
-      <button>
-        <FaTrash />
-      </button>
-    ),
-  },
-
-  {
-    avatar: (
-      <img
-        style={{
-          borderRadius: "50%",
-        }}
-        src={img2}
-        alt="Shoes"
-      />
-    ),
-    name: "May Scoot",
-    email: "aunt.may@example.com",
-    gender: "Female",
-    role: "User",
-    action: (
-      <button>
-        <FaTrash />
-      </button>
-    ),
-  },
-];
-
 
 const Customers = () => {
-  const [data] = useState<DataType[]>(arr);
+  const { user } = useSelector((state: RootState) => state.userReducer);
 
-  const Table = useCallback(
-    TableHOC<DataType>(
-      columns,
-      data,
-      "dashboard-product-box",
-      "Customers",
-      true
-    ),
-    []
-  );
+  const { isLoading, data, isError, error } = useAllUsersQuery(user?._id!);
 
+  const [rows, setRows] = useState<DataType[]>([]);
+
+  const [deleteUser] = useDeleteUserMutation();
+
+  const deleteHandler = async (userId: string) => {
+    const res = await deleteUser({ userId, adminUserId: user?._id! });
+    responseToast(res, null, "");
+  };
+
+  if (isError) {
+    const err = error as CustomError;
+    toast.error(err.data.message);
+  }
+
+  useEffect(() => {
+    if (data)
+      setRows(
+        data.users.map((i) => ({
+          avatar: (
+            <img
+              style={{
+                borderRadius: "50%",
+              }}
+              src={i.photo}
+              alt={i.name}
+            />
+          ),
+          name: i.name,
+          email: i.email,
+          gender: i.gender,
+          role: i.role,
+          action: (
+            <button onClick={() => deleteHandler(i._id)}>
+              <FaTrash />
+            </button>
+          ),
+        }))
+      );
+  }, [data]);
+
+  const Table = TableHOC<DataType>(
+    columns,
+    rows,
+    "dashboard-product-box",
+    "Customers",
+    rows.length > 6
+  )();
 
   return (
     <div className="admin-container">
-    <AdminSidebar />
-    <main>{Table()}</main>
-  </div>
-  )
-}
+      <AdminSidebar />
+      <main>{isLoading ? <Skeleton length={20} /> : Table}</main>
+    </div>
+  );
+};
 
-export default Customers
+export default Customers;

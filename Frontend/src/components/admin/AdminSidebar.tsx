@@ -15,6 +15,7 @@ import {
   FaStopwatch,
 } from "react-icons/fa";
 import { HiMenuAlt4 } from "react-icons/hi"; // ✅ Added missing import
+import { MdDiscount } from "react-icons/md";
 
 interface SidebarItem {
   url: string;
@@ -27,6 +28,7 @@ const sidebarItems: SidebarItem[] = [
   { url: "/admin/product", text: "Product", Icon: RiShoppingBag3Fill },
   { url: "/admin/customer", text: "Customer", Icon: IoIosPeople },
   { url: "/admin/transaction", text: "Transaction", Icon: RiCoupon3Fill },
+  {url:"/admin/discount", text:"Discount",Icon : MdDiscount},
 ];
 
 const chartItems: SidebarItem[] = [

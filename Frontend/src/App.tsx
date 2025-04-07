@@ -13,16 +13,16 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 
 
-
-
-
-
 const Home = lazy(() => import("./pages/Home"));
+const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const Search = lazy(() => import("./pages/Search"));
 const Cart = lazy(() => import("./pages/Cart"));
 const Shipping = lazy(() => import("./pages/Shipping"));
 const Login = lazy(() => import("./pages/Login"));
 const Orders = lazy(() => import("./pages/Orders"));
+const NotFound = lazy(() => import("./pages/not-found"));
+const Checkout = lazy(()=>import("./pages/Checkout"))
+const OrderDetails=lazy(()=>import ("./pages/OrderDetails"))
 
 
 
@@ -32,6 +32,8 @@ const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
 const Products = lazy(() => import("./pages/admin/Products"));
 const Customers = lazy(() => import("./pages/admin/Customers"));
 const Transaction = lazy(() => import("./pages/admin/Transaction"));
+const Discount = lazy(() => import("./pages/admin/Discount"));
+
 const BarCharts = lazy(() => import("./pages/admin/charts/BarCharts"));
 const PieCharts = lazy(() => import("./pages/admin/charts/PieCharts"));
 const LineCharts = lazy(() => import("./pages/admin/charts/LineCharts"));
@@ -45,7 +47,12 @@ const ProductManagement = lazy(
 const TransactionManagement = lazy(
   () => import("./pages/admin/management/TransactionManagement")
 );
-
+const DiscountManagement= lazy(
+  () => import("./pages/admin/management/DiscountManagement")
+);
+const NewDiscount= lazy(
+  () => import("./pages/admin/management/NewDiscount")
+);
 
 
 const App = () => {
@@ -78,6 +85,8 @@ const App = () => {
         <Route path="/" element={<Home/>}/>
         <Route path='/search' element={<Search/>}/>
         <Route path='/cart' element={<Cart/>}/>
+        <Route path='/product/:id' element={<ProductDetails/>}/>
+
 
   
   
@@ -96,8 +105,8 @@ const App = () => {
           >
             <Route path="/shipping" element={<Shipping />} />
             <Route path="/orders" element={<Orders />} />
-            {/* <Route path="/order/:id" element={<OrderDetails />} />
-            <Route path="/pay" element={<Checkout />} /> */}
+            <Route path="/order/:id" element={<OrderDetails />}/>
+            <Route path="/pay" element={<Checkout />} /> 
           </Route>
   
   
@@ -115,6 +124,7 @@ const App = () => {
         <Route path='/admin/dashboard' element={ <Dashboard/> }/>
         <Route path='/admin/product' element={ <Products/> }/>
         <Route path='/admin/transaction' element={ <Transaction/> }/>
+        <Route path='/admin/discount' element={ <Discount/> }/>
         <Route path='/admin/customer' element={ <Customers/> }/>
   
   
@@ -137,7 +147,17 @@ const App = () => {
               path="/admin/transaction/:id"
               element={<TransactionManagement />}
             />
+            <Route
+              path="/admin/discount/new"
+              element={<NewDiscount />}
+            />
+              <Route
+              path="/admin/discount/:id"
+              element={<DiscountManagement />}
+            />
               </Route>
+
+              <Route path="*" element={<NotFound/>}/>
      </Routes>
      </Suspense>
      <Toaster position="bottom-center"/>

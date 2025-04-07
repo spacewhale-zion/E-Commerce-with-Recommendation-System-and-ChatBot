@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo:latest 
+    container_name: mogodb
+    restart: always       
+    ports:
+      - "27017:27017"     # Maps MongoDB's default port
+    enviornment:
+       MONGO_INITDB_ROOT_USERNAME: admin
+       MONGO_INITDB_ROOOT_PASSWORD: password
+
+    volumes:
+      - mongodb_data:/data/db # Persistent storage for MongoDB
+
+    redis:
+    image: redis/redis-stack-server
+    container_name: redis
+    ports: 
+      - "6379:6379"  # Maps Redis's default port
+
+volumes:
+  mongodb_data:  # Named volume for MongoDB data storage

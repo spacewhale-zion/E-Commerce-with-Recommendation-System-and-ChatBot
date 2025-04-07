@@ -1,39 +1,57 @@
-import { useState, ChangeEvent } from "react";
+import { useFileHandler } from "6pp";
+import { FormEvent, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
-
-interface ProductState {
-  name: string;
-  price: number | "";
-  stock: number | "";
-  photo: string | null;
-}
+import { useNewProductMutation } from "../../../redux/api/productAPI";
+import { RootState } from "../../../redux/store";
+import { responseToast } from "../../../utils/features";
 
 const NewProduct = () => {
-  const [product, setProduct] = useState<ProductState>({
-    name: "",
-    price: "",
-    stock: "",
-    photo: null,
-  });
+  const { user } = useSelector((state: RootState) => state.userReducer);
 
-  // Handles file upload
-  const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      const result = reader.result;
-      if (typeof result === "string") {
-        setProduct((prev) => ({ ...prev, photo: result }));
-      }
-    };
-  };
+  const [name, setName] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const [price, setPrice] = useState<number>(1000);
+  const [stock, setStock] = useState<number>(1);
+  const [description, setDescription] = useState<string>("");
 
-  // Handles image URL input
-  const changeImageURLHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setProduct((prev) => ({ ...prev, photo: e.target.value }));
+  const [newProduct] = useNewProductMutation();
+  const navigate = useNavigate();
+
+  const photos = useFileHandler("multiple", 10, 5);
+
+  const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      if (!name || !price || stock < 0 || !category) return;
+
+      if (!photos.file || photos.file.length === 0) return;
+
+      const formData = new FormData();
+
+      formData.set("name", name);
+      formData.set("description", description);
+      formData.set("price", price.toString());
+      formData.set("stock", stock.toString());
+
+      formData.set("category", category);
+
+      photos.file.forEach((file) => {
+        formData.append("photos", file);
+      });
+
+      const res = await newProduct({ id: user?._id!, formData });
+
+      responseToast(res, navigate, "/admin/product");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -41,17 +59,26 @@ const NewProduct = () => {
       <AdminSidebar />
       <main className="product-management">
         <article>
-          <form>
+          <form onSubmit={submitHandler}>
             <h2>New Product</h2>
-            
             <div>
               <label>Name</label>
               <input
                 required
                 type="text"
                 placeholder="Name"
-                value={product.name}
-                onChange={(e) => setProduct((prev) => ({ ...prev, name: e.target.value }))}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label>Description</label>
+              <textarea
+                required
+                placeholder="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </div>
 
@@ -61,39 +88,53 @@ const NewProduct = () => {
                 required
                 type="number"
                 placeholder="Price"
-                value={product.price}
-                onChange={(e) => setProduct((prev) => ({ ...prev, price: Number(e.target.value) }))}
+                value={price}
+                onChange={(e) => setPrice(Number(e.target.value))}
               />
             </div>
-
             <div>
               <label>Stock</label>
               <input
                 required
                 type="number"
                 placeholder="Stock"
-                value={product.stock}
-                onChange={(e) => setProduct((prev) => ({ ...prev, stock: Number(e.target.value) }))}
+                value={stock}
+                onChange={(e) => setStock(Number(e.target.value))}
               />
             </div>
 
             <div>
-              <label>Upload Image</label>
-              <input type="file" onChange={changeImageHandler} />
-            </div>
-
-            <div>
-              <label>Or Enter Image URL</label>
+              <label>Category</label>
               <input
+                required
                 type="text"
-                placeholder="Image URL"
-                onChange={changeImageURLHandler}
+                placeholder="eg. laptop, camera etc"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
               />
             </div>
 
-            {product.photo && <img src={product.photo} alt="New Product" style={{ maxWidth: "200px", marginTop: "10px" }} />}
+            <div>
+              <label>Photos</label>
+              <input
+                required
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={photos.changeHandler}
+              />
+            </div>
 
-            <button type="submit">Create</button>
+            {photos.error && <p>{photos.error}</p>}
+
+            {photos.preview &&
+              photos.preview.map((img, i) => (
+                <img key={i} src={img} alt="New Image" />
+              ))}
+
+            <button disabled={isLoading} type="submit">
+              Create
+            </button>
           </form>
         </article>
       </main>
