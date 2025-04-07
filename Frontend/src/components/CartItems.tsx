@@ -6,9 +6,9 @@ import { CartItem } from "../types/types";
 
 type CartItemProps = {
   cartItem: any;
-  // incrementHandler: (cartItem: CartItem) => void;
-  // decrementHandler: (cartItem: CartItem) => void;
-  // removeHandler: (id: string) => void;
+  incrementHandler: (cartItem: CartItem) => void;
+  decrementHandler: (cartItem: CartItem) => void;
+  removeHandler: (id: string) => void;
 };
 const CartItems=({cartItem}:CartItemProps)=> {
   const { photo,productId,name,price,quantity }=cartItem
