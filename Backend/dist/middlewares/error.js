@@ -8,6 +8,11 @@ export const errorMiddleware = (err, req, res, next) => {
         message: err.message,
     });
 };
-export const TryCatch = (func) => (req, res, next) => {
-    return Promise.resolve(func(req, res, next)).catch(next);
+export const TryCatch = (func) => async (req, res, next) => {
+    try {
+        await func(req, res, next);
+    }
+    catch (error) {
+        next(error);
+    }
 };

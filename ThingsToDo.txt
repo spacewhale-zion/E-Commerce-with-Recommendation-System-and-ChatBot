@@ -1,0 +1,11 @@
+
+
+Use zod for Validation
+
+Recommendation System
+
+Chat bot
+
+Correct sass
+
+Complete incomplete pages in front end

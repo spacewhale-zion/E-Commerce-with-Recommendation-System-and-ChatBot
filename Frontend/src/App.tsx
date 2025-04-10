@@ -56,6 +56,10 @@ const NewDiscount= lazy(
 
 
 const App = () => {
+
+  const server=import.meta.env.VITE_SERVER;
+  
+  console.log(` Server URL: ${server}`)
   const { user, loading } = useSelector(
     (state: RootState) => state.userReducer
   );

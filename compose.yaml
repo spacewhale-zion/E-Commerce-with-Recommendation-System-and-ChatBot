@@ -17,7 +17,50 @@ services:
     image: redis/redis-stack-server
     container_name: redis
     ports: 
-      - "6379:6379"  # Maps Redis's default port
+      - "6379:6379"  # Maps Redis's default port\
+      - "8001:8001"  # Maps Redis's web UI port
+    server:
+         build:
+            context:
+            dockerfile: ./Frontend
+            dockerfile: Dockerfile.dev
+         container_name: server
+         ports:
+              - "3000:3000"  # Maps the server's port
+         env_file:
+               - ./Frontend/.env
+         depends_on: 
+                - mongodb
+                - redis
+         develop:
+            watch:
+                -path: ./Frontend/package*.json
+                action: rebuild
+                -path: ./Frontend/
+                target: /app
+                action: sync
 
+    client:
+      build:
+          context: ./Frontend
+          dockerfile: Dockerfile.dev
+
+      container_name: client
+      ports:
+          - "5173:5173"  # Maps the client's port
+      env_file:
+          - ./Frontend/.env
+      depends_on:
+          - server
+      develop:
+            watch:
+            - path: ./Frontend/package*.json
+              action: rebuild
+              -path: ./Frontend/
+              target: /app
+              action: sync
+                
+
+        
 volumes:
   mongodb_data:  # Named volume for MongoDB data storage

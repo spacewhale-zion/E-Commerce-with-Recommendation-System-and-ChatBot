@@ -97,38 +97,44 @@ export const newProduct = TryCatch(async (req, res, next) => {
     });
 });
 export const updateProduct = TryCatch(async (req, res, next) => {
-    const { id } = req.params;
-    const { name, price, stock, category, description } = req.body;
-    const photos = req.files;
-    const product = await Product.findById(id);
-    if (!product)
-        return next(new ErrorHandler("Product Not Found", 404));
-    if (photos && photos.length > 0) {
-        const photosURL = await uploadToCloudinary(photos);
-        const ids = product.photos.map((photo) => photo.public_id);
-        await deleteFromCloudinary(ids);
-        product.photos = photosURL;
+    try {
+        const { id } = req.params;
+        const { name, price, stock, category, description } = req.body;
+        const photos = req.files;
+        const product = await Product.findById(id);
+        if (!product)
+            return next(new ErrorHandler("Product Not Found", 404));
+        if (photos && photos.length > 0) {
+            const photosURL = await uploadToCloudinary(photos);
+            const ids = product.photos.map((photo) => photo.public_id);
+            await deleteFromCloudinary(ids);
+            product.photos.splice(0, product.photos.length, ...photosURL);
+        }
+        if (name)
+            product.name = name;
+        if (price)
+            product.price = price;
+        if (stock)
+            product.stock = stock;
+        if (category)
+            product.category = category;
+        if (description)
+            product.description = description;
+        await product.save();
+        // Ensure productId is properly formatted
+        await invalidateCache({
+            product: true,
+            productId: String(product._id),
+            admin: true,
+        });
+        return res.status(200).json({
+            success: true,
+            message: "Product Updated Successfully",
+        });
     }
-    if (name)
-        product.name = name;
-    if (price)
-        product.price = price;
-    if (stock)
-        product.stock = stock;
-    if (category)
-        product.category = category;
-    if (description)
-        product.description = description;
-    await product.save();
-    await invalidateCache({
-        product: true,
-        productId: String(product._id),
-        admin: true,
-    });
-    return res.status(200).json({
-        success: true,
-        message: "Product Updated Successfully",
-    });
+    catch (error) {
+        next(error); // Ensures any unexpected errors are caught
+    }
 });
 export const deleteProduct = TryCatch(async (req, res, next) => {
     const product = await Product.findById(req.params.id);
@@ -282,29 +288,3 @@ export const deleteReview = TryCatch(async (req, res, next) => {
         message: "Review Deleted",
     });
 });
-// const generateRandomProducts = async (count: number = 10) => {
-//   const products = [];
-//   for (let i = 0; i < count; i++) {
-//     const product = {
-//       name: faker.commerce.productName(),
-//       photo: "uploads\\5ba9bd91-b89c-40c2-bb8a-66703408f986.png",
-//       price: faker.commerce.price({ min: 1500, max: 80000, dec: 0 }),
-//       stock: faker.commerce.price({ min: 0, max: 100, dec: 0 }),
-//       category: faker.commerce.department(),
-//       createdAt: new Date(faker.date.past()),
-//       updatedAt: new Date(faker.date.recent()),
-//       __v: 0,
-//     };
-//     products.push(product);
-//   }
-//   await Product.create(products);
-//   console.log({ succecss: true });
-// };
-// const deleteRandomsProducts = async (count: number = 10) => {
-//   const products = await Product.find({}).skip(2);
-//   for (let i = 0; i < products.length; i++) {
-//     const product = products[i];
-//     await product.deleteOne();
-//   }
-//   console.log({ succecss: true });
-// };

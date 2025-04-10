@@ -39,21 +39,24 @@ const Cart = () => {
     const { token: cancelToken, cancel } = axios.CancelToken.source();
 
     const timeOutID = setTimeout(() => {
+
       axios
-        .get(`${server}/api/v1/payment/discount?coupon=${couponCode}`, {
-          cancelToken,
-        })
-        .then((res) => {
-          dispatch(discountApplied(res.data.discount));
-          dispatch(saveCoupon(couponCode));
-          setIsValidCouponCode(true);
-          dispatch(calculatePrice());
-        })
-        .catch(() => {
-          dispatch(discountApplied(0));
-          setIsValidCouponCode(false);
-          dispatch(calculatePrice());
-        });
+      .get(`${server}/api/v1/payment/discount?coupon=${couponCode}`, {
+        cancelToken,
+      })
+      .then((res) => {
+        dispatch(discountApplied(res.data.discount));
+        dispatch(saveCoupon(couponCode));
+        setIsValidCouponCode(true);
+        dispatch(calculatePrice());
+      })
+      .catch(() => {
+        dispatch(discountApplied(0));
+        setIsValidCouponCode(false);
+        dispatch(calculatePrice());
+      });
+
+     
     }, 1000);
 
     return () => {
@@ -71,12 +74,12 @@ const Cart = () => {
     <div className="cart">
       <main>
         {cartItems.length > 0 ? (
-          cartItems.map((i, idx) => (
+          cartItems.map((i) => (
             <CartItemCard
               incrementHandler={incrementHandler}
               decrementHandler={decrementHandler}
               removeHandler={removeHandler}
-              key={idx}
+              key={i.productId}
               cartItem={i}
             />
           ))
