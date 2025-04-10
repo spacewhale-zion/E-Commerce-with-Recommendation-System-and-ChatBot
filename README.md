@@ -198,3 +198,7 @@ Contributions are welcome! To contribute:
 4. **Push Your Branch** to your fork.
 5. **Submit a Pull Request** detailing your changes.
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 52a1dcb4e578d8be19b522f08469a90e9e428012
