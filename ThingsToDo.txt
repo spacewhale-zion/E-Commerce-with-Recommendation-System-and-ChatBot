@@ -9,3 +9,5 @@ Chat bot
 Correct sass
 
 Complete incomplete pages in front end
+
+Login and signup different from firebase

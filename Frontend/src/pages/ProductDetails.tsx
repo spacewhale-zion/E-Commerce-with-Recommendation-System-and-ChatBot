@@ -237,19 +237,30 @@ const ReviewCard = ({
   review: Review;
   handleDeleteReview: (reviewId: string) => void;
 }) => (
-  <div className="review">
-    <RatingsComponent value={review.rating} />
-    <p>{review.comment}</p>
-    <div>
-      <img src={review.user.photo} alt="User" />
-      <small>{review.user.name}</small>
-    </div>
-    {userId === review.user._id && (
-      <button onClick={() => handleDeleteReview(review._id)}>
-        <FaTrash />
-      </button>
-    )}
+<div className="review">
+  <RatingsComponent value={review.rating} />
+  <p>{review.comment}</p>
+  <div>
+    <img
+      src={
+        review.user?.photo ||
+        "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+      }
+      alt="User"
+      onError={(e) => {
+        e.currentTarget.src =
+          "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+      }}
+      style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+    />
+    <small>{review.user?.name || "Anonymous"}</small>
   </div>
+  {userId === review.user?._id && (
+    <button onClick={() => handleDeleteReview(review._id)}>
+      <FaTrash />
+    </button>
+  )}
+</div>
 );
 
 const ProductLoader = () => {

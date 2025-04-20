@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import mongoose from "mongoose";
 
 export interface NewUserRequestBody {
   name: string;
@@ -15,6 +16,14 @@ export interface NewProductRequestBody {
   price: number;
   stock: number;
   description: string;
+}
+export interface NewProductRequestBodyWithURL {
+  name: string;
+  category: string;
+  price: number;
+  stock: number;
+  description: string;
+  photos:string
 }
 
 export type ControllerType = (
@@ -47,7 +56,7 @@ export type InvalidateCacheProps = {
   order?: boolean;
   admin?: boolean;
   review?: boolean;
-  userId?: string;
+  userId?: String;
   orderId?: string;
   productId?: string | string[];
 };
@@ -70,7 +79,7 @@ export type ShippingInfoType = {
 
 export interface NewOrderRequestBody {
   shippingInfo: ShippingInfoType;
-  user: string;
+  user:string;
   subtotal: number;
   tax: number;
   shippingCharges: number;

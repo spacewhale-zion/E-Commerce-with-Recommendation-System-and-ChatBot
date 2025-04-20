@@ -1,4 +1,4 @@
-import { Request } from "express";
+import { json, Request } from "express";
 import { redis, redisTTL } from "../app.js";
 import { TryCatch } from "../middlewares/error.js";
 import { Order } from "../models/order.js";
@@ -10,7 +10,7 @@ export const myOrders = TryCatch(async (req, res, next) => {
   const { id: user } = req.query;
 
   const key = `my-orders-${user}`;
-
+ console.log(user);
   let orders;
 
   orders = await redis.get(key);
@@ -26,9 +26,10 @@ export const myOrders = TryCatch(async (req, res, next) => {
   });
 });
 
+
 export const allOrders = TryCatch(async (req, res, next) => {
   const key = `all-orders`;
-
+ 
   let orders;
 
   orders = await redis.get(key);
@@ -42,6 +43,7 @@ export const allOrders = TryCatch(async (req, res, next) => {
     success: true,
     orders,
   });
+
 });
 
 export const getSingleOrder = TryCatch(async (req, res, next) => {
@@ -91,6 +93,7 @@ export const newOrder = TryCatch(
       discount,
       total,
     });
+    
 
     await reduceStock(orderItems);
 

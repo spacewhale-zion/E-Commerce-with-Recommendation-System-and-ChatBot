@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { Slider } from "6pp";
 import { TbTruckDelivery } from "react-icons/tb";
 import { LuShieldCheck } from "react-icons/lu";
+import Footer from "../components/Footer";
 
 const clients = [
   {
@@ -315,6 +316,7 @@ const Home = () => {
           ))}
         </ul>
       </article>
+      <Footer/>
     </>
   );
 };

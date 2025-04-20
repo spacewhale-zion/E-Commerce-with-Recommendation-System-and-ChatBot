@@ -7,6 +7,7 @@ import { User } from "../models/user.js";
 import {
   BaseQuery,
   NewProductRequestBody,
+  NewProductRequestBodyWithURL,
   SearchRequestQuery,
 } from "../types/types.js";
 import {
@@ -16,7 +17,8 @@ import {
   uploadToCloudinary,
 } from "../utils/features.js";
 import ErrorHandler from "../utils/utility-class.js";
-// import { faker } from "@faker-js/faker";
+
+
 
 // Revalidate on New,Update,Delete Product & on New Order
 export const getlatestProducts = TryCatch(async (req, res, next) => {
@@ -109,8 +111,34 @@ export const newProduct = TryCatch(
       return next(new ErrorHandler("Please enter All Fields", 400));
 
     // Upload Here
-
     const photosURL = await uploadToCloudinary(photos);
+
+    await Product.create({
+      name,
+      price,
+      description,
+      stock,
+      category: category.toLowerCase(),
+      photos: photosURL,
+    });
+
+    await invalidateCache({ product: true, admin: true });
+
+    return res.status(201).json({
+      success: true,
+      message: "Product Created Successfully",
+    });
+  }
+);
+export const newProductWithUrl = TryCatch(
+  async (req: Request<{}, {}, NewProductRequestBodyWithURL >, res, next) => {
+    const { name, price, stock, category, description,photos } = req.body;
+
+    if (!name || !price || !stock || !category || !description)
+      return next(new ErrorHandler("Please enter All Fields", 400));
+
+    // Upload Here
+    const photosURL = photos;
 
     await Product.create({
       name,
@@ -131,7 +159,7 @@ export const newProduct = TryCatch(
 );
 
 export const updateProduct = TryCatch(async (req, res, next) => {
-  try {
+
     const { id } = req.params;
     const { name, price, stock, category, description } = req.body;
     const photos = req.files as Express.Multer.File[] | undefined;
@@ -168,9 +196,7 @@ export const updateProduct = TryCatch(async (req, res, next) => {
       success: true,
       message: "Product Updated Successfully",
     });
-  } catch (error) {
-    next(error); // Ensures any unexpected errors are caught
-  }
+ 
 });
 
 
@@ -213,13 +239,13 @@ export const getAllProducts = TryCatch(
       totalPage = data.totalPage;
       products = data.products;
     } else {
-      // 1,2,3,4,5,6,7,8
-      // 9,10,11,12,13,14,15,16
-      // 17,18,19,20,21,22,23,24
+    
       const limit = Number(process.env.PRODUCT_PER_PAGE) || 8;
       const skip = (page - 1) * limit;
 
       const baseQuery: BaseQuery = {};
+      
+  
 
       if (search)
         baseQuery.name = {
@@ -231,8 +257,6 @@ export const getAllProducts = TryCatch(
         baseQuery.price = {
           $lte: Number(price),
         };
-
-      if (category) baseQuery.category = category;
 
       const productsPromise = Product.find(baseQuery)
         .sort(sort && { price: sort === "asc" ? 1 : -1 })
@@ -266,6 +290,7 @@ export const allReviewsOfProduct = TryCatch(async (req, res, next) => {
 
   if (reviews) reviews = JSON.parse(reviews);
   else {
+   
     reviews = await Review.find({
       product: req.params.id,
     })
@@ -282,15 +307,16 @@ export const allReviewsOfProduct = TryCatch(async (req, res, next) => {
 });
 
 export const newReview = TryCatch(async (req, res, next) => {
-  const user = await User.findById(req.query.id);
 
+  const user = await User.findById(req.query.id);
   if (!user) return next(new ErrorHandler("Not Logged In", 404));
 
   const product = await Product.findById(req.params.id);
+
   if (!product) return next(new ErrorHandler("Product Not Found", 404));
 
   const { comment, rating } = req.body;
-
+  console.log(user._id,product._id);
   const alreadyReviewed = await Review.findOne({
     user: user._id,
     product: product._id,

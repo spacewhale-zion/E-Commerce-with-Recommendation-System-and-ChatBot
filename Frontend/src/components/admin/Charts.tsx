@@ -69,7 +69,7 @@ interface BarChartProps {
         y: {
           beginAtZero: true,
           grid: {
-            display: false,
+            display: false
           },
         },
         x: {

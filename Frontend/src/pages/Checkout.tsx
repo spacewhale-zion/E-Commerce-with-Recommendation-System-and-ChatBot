@@ -15,9 +15,8 @@ import {
   import { NewOrderRequest } from "../types/api-types";
   import { responseToast } from "../utils/features";
   
-  const stripeKey ="pk_test_51R14N81Dh3gX2LfpmwiKknhcFkSj2PFtPU9GW1OI2AQnQL4GFDNRljOj2mcVPk2TBz9FtUGgZk1D7mASaigbh5Cx009iZjQTqm"
+  const stripeKey =import.meta.env.VITE_STRIPE_KEY
   const stripePromise =  loadStripe(stripeKey);
-  console.log(stripePromise)
   const CheckOutForm = () => {
     const stripe = useStripe();
     const elements = useElements();

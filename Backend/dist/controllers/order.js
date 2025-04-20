@@ -6,6 +6,7 @@ import ErrorHandler from "../utils/utility-class.js";
 export const myOrders = TryCatch(async (req, res, next) => {
     const { id: user } = req.query;
     const key = `my-orders-${user}`;
+    console.log(user);
     let orders;
     orders = await redis.get(key);
     if (orders)

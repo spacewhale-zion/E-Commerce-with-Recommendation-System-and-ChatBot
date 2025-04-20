@@ -10,7 +10,7 @@ export const createPaymentIntent = TryCatch(async (req, res, next) => {
   const { id } = req.query;
 
   const user = await User.findById(id).select("name");
-
+ 
   if (!user) return next(new ErrorHandler("Please login first", 401));
 
   const {

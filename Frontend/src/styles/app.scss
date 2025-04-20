@@ -78,6 +78,7 @@ $color3: rgb(0, 104, 136);
 }
 
 .header {
+  z-index: 2;
   @include flex(row, flex-end, stretch, 1.2rem);
   padding: 1rem;
   a {

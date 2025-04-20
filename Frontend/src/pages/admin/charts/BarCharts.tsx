@@ -11,6 +11,8 @@ import { getLastMonths } from "../../../utils/features";
 const { last12Months, last6Months } = getLastMonths();
 
 const Barcharts = () => {
+
+
   const { user } = useSelector((state: RootState) => state.userReducer);
 
   const { isLoading, data, error, isError } = useBarQuery(user?._id!);

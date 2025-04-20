@@ -41,6 +41,13 @@
       border-radius: 5px;
       &:hover {
         opacity: 0.8;
+        cursor: pointer;
+      }
+      > button{
+        background-color: rgb(0, 104, 136);
+        border: none;
+        color: white;
+        
       }
     }
 
@@ -96,6 +103,7 @@
   }
 
   > button {
+    
     border: none;
     background-color: transparent;
     @include flex;

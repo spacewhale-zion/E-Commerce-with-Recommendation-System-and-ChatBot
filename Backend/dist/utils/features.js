@@ -10,10 +10,10 @@ export const findAverageRatings = async (productId) => {
     reviews.forEach((review) => {
         totalRating += review.rating;
     });
-    const averateRating = Math.floor(totalRating / reviews.length) || 0;
+    const averageRating = Math.floor(totalRating / reviews.length) || 0;
     return {
         numOfReviews: reviews.length,
-        ratings: averateRating,
+        ratings: averageRating,
     };
 };
 const getBase64 = (file) => `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;

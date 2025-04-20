@@ -1,5 +1,6 @@
 import express from "express";
 import { connectDB, connectRedis } from "./utils/features.js";
+import { errorMiddleware } from "./middlewares/error.js";
 import { config } from "dotenv";
 import morgan from "morgan";
 import Stripe from "stripe";
@@ -15,19 +16,19 @@ config({
     path: "./.env",
 });
 const port = 4000;
-const mongoURI = "mongodb://localhost:27017";
-const stripeKey = "sk_test_51R14N81Dh3gX2Lfp0qhJ8hSQU2LjazKsjBYq0axUSlBjEvD0tEfYhWW3z8FhSJDL5ipgtZk3EbK6RV8fpmrKph5t009DxqQ0Rp";
-const redisURI = "reddis://default:wuJY1dPhwfvbMDb9YOh8uwGTUT87ah8x@redis-14490.c83.us-east-1-2.ec2.redns.redis-cloud.com:14490";
-const clientURL = "http://localhost:5173";
+const mongoURI = process.env.MONGO_URI;
+const stripeKey = process.env.STRIPE_KEY;
+const redisURI = process.env.REDIS_URI;
+const clientURL = process.env.CLIENT_URI;
+console.log(stripeKey);
 export const redisTTL = process.env.REDIS_TTL || 60 * 60 * 4;
 connectDB(mongoURI);
 export const redis = connectRedis(redisURI);
 cloudinary.config({
-    cloud_name: "dizjhnmdn",
-    api_key: "753791538196129",
-    api_secret: "iY8J1ZkZjhfZwR-J0u_ik44z9h8",
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
 });
-console.log(stripeKey);
 export const stripe = new Stripe(stripeKey);
 const app = express();
 app.use(express.json());
@@ -47,7 +48,7 @@ app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/payment", paymentRoute);
 app.use("/api/v1/dashboard", dashboardRoute);
 app.use("/uploads", express.static("uploads"));
-// app.use(errorMiddleware);
+app.use(errorMiddleware);
 app.listen(port, () => {
     console.log(`Express is working on http://localhost:${port}`);
 });

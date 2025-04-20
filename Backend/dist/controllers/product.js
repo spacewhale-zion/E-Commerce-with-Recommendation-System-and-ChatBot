@@ -5,7 +5,6 @@ import { Review } from "../models/review.js";
 import { User } from "../models/user.js";
 import { deleteFromCloudinary, findAverageRatings, invalidateCache, uploadToCloudinary, } from "../utils/features.js";
 import ErrorHandler from "../utils/utility-class.js";
-// import { faker } from "@faker-js/faker";
 // Revalidate on New,Update,Delete Product & on New Order
 export const getlatestProducts = TryCatch(async (req, res, next) => {
     let products;
@@ -96,45 +95,60 @@ export const newProduct = TryCatch(async (req, res, next) => {
         message: "Product Created Successfully",
     });
 });
+export const newProductWithUrl = TryCatch(async (req, res, next) => {
+    const { name, price, stock, category, description, photos } = req.body;
+    if (!name || !price || !stock || !category || !description)
+        return next(new ErrorHandler("Please enter All Fields", 400));
+    // Upload Here
+    const photosURL = photos;
+    await Product.create({
+        name,
+        price,
+        description,
+        stock,
+        category: category.toLowerCase(),
+        photos: photosURL,
+    });
+    await invalidateCache({ product: true, admin: true });
+    return res.status(201).json({
+        success: true,
+        message: "Product Created Successfully",
+    });
+});
 export const updateProduct = TryCatch(async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const { name, price, stock, category, description } = req.body;
-        const photos = req.files;
-        const product = await Product.findById(id);
-        if (!product)
-            return next(new ErrorHandler("Product Not Found", 404));
-        if (photos && photos.length > 0) {
-            const photosURL = await uploadToCloudinary(photos);
-            const ids = product.photos.map((photo) => photo.public_id);
-            await deleteFromCloudinary(ids);
-            product.photos.splice(0, product.photos.length, ...photosURL);
-        }
-        if (name)
-            product.name = name;
-        if (price)
-            product.price = price;
-        if (stock)
-            product.stock = stock;
-        if (category)
-            product.category = category;
-        if (description)
-            product.description = description;
-        await product.save();
-        // Ensure productId is properly formatted
-        await invalidateCache({
-            product: true,
-            productId: String(product._id),
-            admin: true,
-        });
-        return res.status(200).json({
-            success: true,
-            message: "Product Updated Successfully",
-        });
+    const { id } = req.params;
+    const { name, price, stock, category, description } = req.body;
+    const photos = req.files;
+    const product = await Product.findById(id);
+    if (!product)
+        return next(new ErrorHandler("Product Not Found", 404));
+    if (photos && photos.length > 0) {
+        const photosURL = await uploadToCloudinary(photos);
+        const ids = product.photos.map((photo) => photo.public_id);
+        await deleteFromCloudinary(ids);
+        product.photos.splice(0, product.photos.length, ...photosURL);
     }
-    catch (error) {
-        next(error); // Ensures any unexpected errors are caught
-    }
+    if (name)
+        product.name = name;
+    if (price)
+        product.price = price;
+    if (stock)
+        product.stock = stock;
+    if (category)
+        product.category = category;
+    if (description)
+        product.description = description;
+    await product.save();
+    // Ensure productId is properly formatted
+    await invalidateCache({
+        product: true,
+        productId: String(product._id),
+        admin: true,
+    });
+    return res.status(200).json({
+        success: true,
+        message: "Product Updated Successfully",
+    });
 });
 export const deleteProduct = TryCatch(async (req, res, next) => {
     const product = await Product.findById(req.params.id);
@@ -166,9 +180,6 @@ export const getAllProducts = TryCatch(async (req, res, next) => {
         products = data.products;
     }
     else {
-        // 1,2,3,4,5,6,7,8
-        // 9,10,11,12,13,14,15,16
-        // 17,18,19,20,21,22,23,24
         const limit = Number(process.env.PRODUCT_PER_PAGE) || 8;
         const skip = (page - 1) * limit;
         const baseQuery = {};
@@ -181,8 +192,6 @@ export const getAllProducts = TryCatch(async (req, res, next) => {
             baseQuery.price = {
                 $lte: Number(price),
             };
-        if (category)
-            baseQuery.category = category;
         const productsPromise = Product.find(baseQuery)
             .sort(sort && { price: sort === "asc" ? 1 : -1 })
             .limit(limit)
@@ -228,6 +237,7 @@ export const newReview = TryCatch(async (req, res, next) => {
     if (!product)
         return next(new ErrorHandler("Product Not Found", 404));
     const { comment, rating } = req.body;
+    console.log(user._id, product._id);
     const alreadyReviewed = await Review.findOne({
         user: user._id,
         product: product._id,

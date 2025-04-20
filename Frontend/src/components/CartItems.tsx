@@ -16,6 +16,8 @@ const CartItemComponent = ({
   decrementHandler,
   removeHandler,
 }: CartItemProps) => {
+
+
   const { photo, productId, name, price, quantity } = cartItem;
 
   return (
@@ -25,7 +27,7 @@ const CartItemComponent = ({
         <Link to={`/product/${productId}`}>{name}</Link>
         <span>₹{price}</span>
       </article>
-
+      
       <div>
         <button onClick={() => decrementHandler(cartItem)}>-</button>
         <p>{quantity}</p>

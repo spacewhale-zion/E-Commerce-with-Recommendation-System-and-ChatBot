@@ -9,6 +9,7 @@ import {
   getSingleProduct,
   getlatestProducts,
   newProduct,
+  newProductWithUrl,
   newReview,
   updateProduct,
 } from "../controllers/product.js";
@@ -19,6 +20,8 @@ const app = express.Router();
 
 //To Create New Product  - /api/v1/product/new
 app.post("/new", adminOnly, mutliUpload, newProduct);
+app.post("/newUrl", adminOnly, newProductWithUrl);
+
 
 //To get all Products with filters  - /api/v1/product/all
 app.get("/all", getAllProducts);

@@ -8,21 +8,23 @@ import { InvalidateCacheProps, OrderItemType } from "../types/types.js";
 
 export const findAverageRatings = async (
   productId: mongoose.Types.ObjectId
-) => {
+): Promise<{ numOfReviews: number; ratings: number }> => {
   let totalRating = 0;
 
   const reviews = await Review.find({ product: productId });
+
   reviews.forEach((review) => {
     totalRating += review.rating;
   });
 
-  const averateRating = Math.floor(totalRating / reviews.length) || 0;
+  const averageRating = Math.floor(totalRating / reviews.length) || 0;
 
   return {
     numOfReviews: reviews.length,
-    ratings: averateRating,
+    ratings: averageRating,
   };
 };
+
 
 const getBase64 = (file: Express.Multer.File) =>
   `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
@@ -66,6 +68,9 @@ export const connectRedis = (redisURI: string) => {
 
   return redis;
 };
+
+
+
 
 export const connectDB = (uri: string) => {
   mongoose
