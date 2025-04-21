@@ -7,6 +7,9 @@ export type User = {
   dob: string;
   _id: string;
 };
+export interface UserState {
+  lastOrderProductId: string;
+}
 
 export type Product = {
   name: string;

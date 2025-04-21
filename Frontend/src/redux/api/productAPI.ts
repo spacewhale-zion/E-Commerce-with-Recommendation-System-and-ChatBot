@@ -13,6 +13,7 @@ import {
   SearchProductsResponse,
   UpdateProductRequest,
 } from "../../types/api-types";
+import { RecommendedProductsResponse } from "../../types/api-types"; // Ensure you have this type defined
 
 export const productAPI = createApi({
   reducerPath: "productApi",
@@ -105,8 +106,14 @@ export const productAPI = createApi({
       }),
       invalidatesTags: ["product"],
     }),
+     // New recommendations query
+     recommendations: builder.query<RecommendedProductsResponse, string>({
+      query: (productId) => `recommendations/${productId}`,
+      providesTags: ["product"],
+    }),
   }),
 });
+
 
 export const {
   useLatestProductsQuery,
@@ -120,4 +127,5 @@ export const {
   useProductDetailsQuery,
   useUpdateProductMutation,
   useDeleteProductMutation,
+  useRecommendationsQuery,
 } = productAPI;

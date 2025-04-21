@@ -7,7 +7,6 @@ import {
   UpdateOrderRequest,
 } from "../../types/api-types";
 
-
 export const orderApi = createApi({
   reducerPath: "orderApi",
   baseQuery: fetchBaseQuery({
@@ -49,6 +48,7 @@ export const orderApi = createApi({
       query: (id) => id,
       providesTags: ["orders"],
     }),
+   
   }),
 });
 
@@ -59,4 +59,5 @@ export const {
   useMyOrdersQuery,
   useAllOrdersQuery,
   useOrderDetailsQuery,
+   // Export the recommendation hook
 } = orderApi;

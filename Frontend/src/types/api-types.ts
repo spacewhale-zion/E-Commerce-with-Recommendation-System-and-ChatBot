@@ -149,3 +149,7 @@ export type SingleDiscountResponse = {
   success: boolean;
   coupon: CouponType;
 };
+export interface RecommendedProductsResponse {
+  products: Product[];    // Array of recommended products
+      
+}

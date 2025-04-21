@@ -1,18 +1,22 @@
-import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Skeleton } from "../components/Loader";
 import ProductCard from "../components/ProductCard";
-import { useLatestProductsQuery } from "../redux/api/productAPI";
+import { useLatestProductsQuery} from "../redux/api/productAPI";
+import { useRecommendationsQuery} from "../redux/api/productAPI";
+import { Slider } from "6pp";
 import { addToCart } from "../redux/reducer/cartReducer";
-import { CartItem } from "../types/types";
+import { CartItem, Product } from "../types/types";
+import toast from "react-hot-toast";
 import videoCover from "../assets/videos/cover.mp4";
 import { FaAnglesDown, FaHeadset } from "react-icons/fa6";
 import { motion } from "framer-motion";
-import { Slider } from "6pp";
 import { TbTruckDelivery } from "react-icons/tb";
 import { LuShieldCheck } from "react-icons/lu";
 import Footer from "../components/Footer";
+import { RootState } from "../redux/store";
+import FAQChatbot from "../components/FAQChatbot";
 
 const clients = [
   {
@@ -99,19 +103,11 @@ const banners = [
   "https://res.cloudinary.com/dj5q966nb/image/upload/v1719253445/rmbjpuzctjdbtt8hewaz.png",
   "https://res.cloudinary.com/dj5q966nb/image/upload/v1719253433/ticeufjqvf6napjhdiee.png",
 ];
+
 const categories = [
-  "Electronics",
-  "Mobiles",
-  "Laptops",
-  "Books",
-  "Fashion",
-  "Appliances",
-  "Furniture",
-  "Home Decor",
-  "Grocery",
-  "Beauty",
-  "Toys",
-  "Fitness",
+  "Electronics", "Mobiles", "Laptops", "Books", "Fashion",
+  "Appliances", "Furniture", "Home Decor", "Grocery", "Beauty",
+  "Toys", "Fitness",
 ];
 
 const services = [
@@ -133,9 +129,47 @@ const services = [
 ];
 
 const Home = () => {
+  const dispatch = useDispatch();
+  const {user}= useSelector((state: RootState) => state.userReducer)
   const { data, isError, isLoading } = useLatestProductsQuery("");
 
-  const dispatch = useDispatch();
+  const [lastProductId, setLastProductId] = useState<string | null>(null);
+
+  // Get the last ordered product ID from backend
+  useEffect(() => {
+    const fetchLastProduct = async () => {
+      try {
+        const userId = user?._id ;
+        if (!userId) return;
+
+        const response = await fetch(
+          `${import.meta.env.VITE_SERVER}/api/v1/order/my?id=${userId}`
+        );
+ 
+        const result = await response.json();
+       
+        if (result.success && result.orders.length > 0) {
+          const latestOrder = result.orders[result.orders.length - 1];
+          const lastProduct = latestOrder.orderItems?.[0].productId;
+          
+          if (lastProduct) setLastProductId(lastProduct);
+        }
+      } catch (err) {
+        toast.error("Failed to fetch last order.");
+      }
+    };
+
+    fetchLastProduct();
+  },[user?._id]);
+
+  // Fetch recommendations
+
+  const {
+    data: recommendedProducts,
+    isError: isRecommendationsError,
+    isLoading: isRecommendationsLoading,
+  } = useRecommendationsQuery(lastProductId || "", { skip: !lastProductId });
+
 
   const addToCartHandler = (cartItem: CartItem) => {
     if (cartItem.stock < 1) return toast.error("Out of Stock");
@@ -146,9 +180,10 @@ const Home = () => {
   if (isError) toast.error("Cannot Fetch the Products");
 
   const coverMessage =
-    "Fashion isn't just clothes; it's a vibrant language. Silhouettes and textures speak volumes, a conversation starter with every bold print. It's a way to tell our story, a confidence booster, or a playful exploration. From elegance to rebellion, fashion lets us navigate the world in style.".split(
-      " "
-    );
+    "Fashion isn't just clothes; it's a vibrant language. Silhouettes and textures speak volumes..."
+      .split(" ");
+
+     
 
   return (
     <>
@@ -166,33 +201,51 @@ const Home = () => {
               ))}
             </ul>
           </aside>
-          <Slider
-            autoplay
-            autoplayDuration={1500}
-            showNav={false}
-            images={banners}
-          />
+          <Slider autoplay autoplayDuration={1500} showNav={false} images={banners} />
         </div>
+
+        {/* Recommended Products Section */}
+        {lastProductId && (
+          <>
+            <h1>Recommended for You</h1>
+            <main>
+              {isRecommendationsLoading ? (
+                <Skeleton width="18.75rem" length={6} height="20rem" />
+              ) : isRecommendationsError ? (
+                <p>Could not fetch recommendations</p>
+              ) : (
+                
+                recommendedProducts?.products?.map((i: Product)  => (
+                  <ProductCard
+                    key={i._id}
+                    productId={i._id}
+                    name={i.name}
+                    price={i.price}
+                    stock={i.stock}
+                    handler={addToCartHandler}
+                    photos={i.photos}
+                  />
+                ))
+              )}
+            </main>
+          </>
+        )}
 
         <h1>
           Latest Products
-          <Link to="/search" className="findmore">
-            More
-          </Link>
+          <Link to="/search" className="findmore">More</Link>
         </h1>
 
         <main>
           {isLoading ? (
-            <>
-              {Array.from({ length: 6 }, (_, i) => (
-                <div key={i} style={{ height: "25rem" }}>
-                  <Skeleton width="18.75rem" length={1} height="20rem" />
-                  <Skeleton width="18.75rem" length={2} height="1.95rem" />
-                </div>
-              ))}
-            </>
+            Array.from({ length: 6 }, (_, i) => (
+              <div key={i} style={{ height: "25rem" }}>
+                <Skeleton width="18.75rem" length={1} height="20rem" />
+                <Skeleton width="18.75rem" length={2} height="1.95rem" />
+              </div>
+            ))
           ) : (
-            data?.products.map((i) => (
+            data?.products.map((i: Product) => (
               <ProductCard
                 key={i._id}
                 productId={i._id}
@@ -207,40 +260,21 @@ const Home = () => {
         </main>
       </div>
 
+      {/* Video + Clients + Services Sections */}
       <article className="cover-video-container">
         <div className="cover-video-overlay"></div>
         <video autoPlay loop muted src={videoCover} />
         <div className="cover-video-content">
-          <motion.h2
-            initial={{ x: -100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
+          <motion.h2 initial={{ x: -100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
             Fashion
           </motion.h2>
           {coverMessage.map((el, i) => (
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{
-                duration: 0.25,
-                delay: i / 10,
-              }}
-              key={i}
-            >
+            <motion.span key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25, delay: i / 10 }}>
               {el}{" "}
             </motion.span>
           ))}
         </div>
-        <motion.span
-          animate={{
-            y: [0, 10, 0],
-            transition: {
-              duration: 1,
-              repeat: Infinity,
-            },
-          }}
-        >
+        <motion.span animate={{ y: [0, 10, 0], transition: { duration: 1, repeat: Infinity } }}>
           <FaAnglesDown />
         </motion.span>
       </article>
@@ -251,72 +285,41 @@ const Home = () => {
           <div>
             {clients.map((client, i) => (
               <motion.img
-                initial={{
-                  opacity: 0,
-                  x: -10,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  x: 0,
-                  transition: {
-                    delay: i / 20,
-                    ease: "circIn",
-                  },
-                }}
+                key={i}
                 src={client.src}
                 alt={client.alt}
-                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0, transition: { delay: i / 20, ease: "circIn" } }}
               />
             ))}
           </div>
-
-          <motion.p
-            initial={{ opacity: 0, y: -100 }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-              transition: {
-                delay: clients.length / 20,
-              },
-            }}
-          >
+          <motion.p initial={{ opacity: 0, y: -100 }} whileInView={{ opacity: 1, y: 0, transition: { delay: clients.length / 20 } }}>
             Trusted By 100+ Companies in 30+ countries
           </motion.p>
         </div>
       </article>
 
-      <hr
-        style={{
-          backgroundColor: "rgba(0,0,0,0.1)",
-          border: "none",
-          height: "1px",
-        }}
-      />
+      <hr style={{ backgroundColor: "rgba(0,0,0,0.1)", border: "none", height: "1px" }} />
 
       <article className="our-services">
         <ul>
           {services.map((service, i) => (
             <motion.li
-              initial={{ opacity: 0, y: -100 }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-                transition: {
-                  delay: i / 20,
-                },
-              }}
               key={service.title}
+              initial={{ opacity: 0, y: -100 }}
+              whileInView={{ opacity: 1, y: 0, transition: { delay: i / 20 } }}
             >
               <div>{service.icon}</div>
               <section>
-                <h3>{service.title}Y</h3>
-                <p>{service.title}</p>
+                <h3>{service.title}</h3>
+                <p>{service.description}</p>
               </section>
             </motion.li>
           ))}
         </ul>
       </article>
-      <Footer/>
+      <Footer />
+      <FAQChatbot/>
     </>
   );
 };

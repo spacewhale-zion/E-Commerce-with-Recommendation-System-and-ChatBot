@@ -7,6 +7,7 @@ import { useMyOrdersQuery } from "../redux/api/orderAPI";
 import { RootState } from "../redux/store";
 import { CustomError } from "../types/api-types";
 import { Skeleton } from "../components/Loader";
+import { Link } from "react-router-dom";
 
 
 type DataType = {
@@ -15,6 +16,7 @@ type DataType = {
   quantity: number;
   discount: number;
   status: ReactElement;
+  action: ReactElement;
 };
 
 const column: Column<DataType>[] = [
@@ -38,12 +40,15 @@ const column: Column<DataType>[] = [
     Header: "Status",
     accessor: "status",
   },
+  {
+    Header: "Action",
+    accessor: "action",
+  },
 ];
 
 const Orders = () => {
   const { user } = useSelector((state: RootState) => state.userReducer);
  
-  console.log(user?._id);
   const { isLoading, data, isError, error } = useMyOrdersQuery(user?._id!);
 
   const [rows, setRows] = useState<DataType[]>([]);
@@ -74,6 +79,7 @@ const Orders = () => {
               {i.status}
             </span>
           ),
+          action: <Link to={`/order/${i._id}`}>Show Details</Link>,
         }))
       );
   }, [data]);

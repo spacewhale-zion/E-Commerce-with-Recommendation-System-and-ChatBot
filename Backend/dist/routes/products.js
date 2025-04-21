@@ -1,5 +1,5 @@
 import express from "express";
-import { allReviewsOfProduct, deleteProduct, deleteReview, getAdminProducts, getAllCategories, getAllProducts, getSingleProduct, getlatestProducts, newProduct, newProductWithUrl, newReview, updateProduct, } from "../controllers/product.js";
+import { allReviewsOfProduct, deleteProduct, deleteReview, getAdminProducts, getAllCategories, getAllProducts, getRecommendedProducts, getSingleProduct, getlatestProducts, newProduct, newProductWithUrl, newReview, updateProduct, } from "../controllers/product.js";
 import { adminOnly } from "../middlewares/auth.js";
 import { mutliUpload } from "../middlewares/multer.js";
 const app = express.Router();
@@ -14,6 +14,8 @@ app.get("/latest", getlatestProducts);
 app.get("/categories", getAllCategories);
 //To get all Products   - /api/v1/product/admin-products
 app.get("/admin-products", adminOnly, getAdminProducts);
+// For recommended Product
+app.get('/recommendations/:productId', getRecommendedProducts);
 // To get, update, delete Product
 app
     .route("/:id")

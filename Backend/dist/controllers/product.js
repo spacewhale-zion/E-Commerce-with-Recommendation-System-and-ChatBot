@@ -5,6 +5,28 @@ import { Review } from "../models/review.js";
 import { User } from "../models/user.js";
 import { deleteFromCloudinary, findAverageRatings, invalidateCache, uploadToCloudinary, } from "../utils/features.js";
 import ErrorHandler from "../utils/utility-class.js";
+export const getRecommendedProducts = TryCatch(async (req, res) => {
+    const { productId } = req.params;
+    // Find the base product
+    const baseProduct = await Product.findById(productId);
+    if (!baseProduct) {
+        return res.status(404).json({ message: 'Product not found' });
+    }
+    // Find similar products in the same category, within ±100 price range, and good ratings
+    const recommendedProducts = await Product.find({
+        _id: { $ne: productId }, // Exclude the current product
+        category: baseProduct.category,
+        price: {
+            $gte: baseProduct.price - 100,
+            $lte: baseProduct.price + 100
+        },
+        ratings: { $gte: 3.5 }
+    }).limit(5);
+    res.status(200).json({
+        success: true,
+        products: recommendedProducts,
+    });
+});
 // Revalidate on New,Update,Delete Product & on New Order
 export const getlatestProducts = TryCatch(async (req, res, next) => {
     let products;
@@ -204,6 +226,7 @@ export const getAllProducts = TryCatch(async (req, res, next) => {
         totalPage = Math.ceil(filteredOnlyProduct.length / limit);
         await redis.setex(key, 30, JSON.stringify({ products, totalPage }));
     }
+    console.log(products);
     return res.status(200).json({
         success: true,
         products,

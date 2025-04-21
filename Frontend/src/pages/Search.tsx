@@ -40,6 +40,7 @@ const Search = () => {
     page,
     price: maxPrice,
   });
+  
 
   const dispatch = useDispatch();
 
@@ -50,7 +51,7 @@ const Search = () => {
   };
 
   const isPrevPage = page > 1;
-  const isNextPage = page < 4;
+  const isNextPage = page < (searchedData?.totalPage ?? 1);
 
   if (isError) {
     const err = error as CustomError;
