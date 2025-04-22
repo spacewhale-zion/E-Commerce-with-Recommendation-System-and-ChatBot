@@ -5,6 +5,8 @@ import { redis } from "../app.js";
 import { Product } from "../models/product.js";
 import { Review } from "../models/review.js";
 import { InvalidateCacheProps, OrderItemType } from "../types/types.js";
+import { isJWT } from "validator";
+
 
 export const findAverageRatings = async (
   productId: mongoose.Types.ObjectId
