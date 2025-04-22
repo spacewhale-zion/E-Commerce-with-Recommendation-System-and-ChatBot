@@ -1,50 +1,165 @@
 .login {
   height: 90vh;
-  @include flex(column);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 
-  > main {
-    width: 100%;
-    height: 80%;
-    max-width: 400px;
-    padding: 2rem;
-    @include baseShadow;
-    @include flex(column, center, stretch);
-    > div {
-      width: 100%;
-      @include flex(column, flex-start, stretch, 0.2rem);
-      > input,
-      > select {
-        @include inputStyle;
-        border: 1px solid rgba(162, 162, 162, 0.53);
-        border-radius: 5px;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      }
+.login > main {
+  width: 100%;
+  height: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: stretch;
+  background-color: #fff;
+  border-radius: 8px;
+}
 
-      > p {
-        text-align: center;
-        margin: 2rem;
-      }
+.login > main > div {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-top: 1rem;
+}
+.login > main > div > p {
+  width: 100%;
+  text-align: center;
+  margin: 1.5rem 0;
+  position: relative;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
 
-      button {
-        width: 70%;
-        margin: auto;
-        height: 3rem;
-        @include btn(unset, rgb(62, 125, 242), white);
-        @include flex;
-        border: 1px solid rgb(62, 125, 242);
-        border-radius: 5px;
-        font-size: 1.05rem;
-        > svg {
-          background-color: white;
-          width: 30%;
-          height: 100%;
-        }
+.login > main > div > p::before,
+.login > main > div > p::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background-color: #ccc;
+}
 
-        > span {
-          width: 100%;
-          text-align: center;
-        }
-      }
-    }
-  }
+.login > main > div > p::before {
+  left: 0;
+}
+
+.login > main > div > p::after {
+  right: 0;
+}
+
+.login > main input,
+.login > main select {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1px solid rgba(162, 162, 162, 0.53);
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: white;
+  box-sizing: border-box;
+  transition: border 0.3s ease;
+}
+
+.login > main input:focus,
+.login > main select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
+.login > main label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.login > main > div > p {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.login > main button {
+  width: 70%;
+  margin: 1rem auto;
+  height: 3rem;
+  background-color: rgb(62, 125, 242);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(62, 125, 242);
+  border-radius: 5px;
+  font-size: 1.05rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.login > main button:hover {
+  background-color: rgb(50, 100, 200);
+}
+
+.login > main button > svg {
+  background-color: white;
+  width: 30%;
+  height: 100%;
+  padding: 0.5rem;
+}
+
+.login > main button > span {
+  width: 100%;
+  text-align: center;
+}
+
+.login .login-email-btn {
+  margin-top: 1rem;
+  width: 100%;
+  background-color: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.login .login-email-btn:hover {
+  background-color: #1d4ed8;
+  cursor: pointer;
+}
+
+.login .login-email-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+}
+
+.toggle-auth {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.toggle-auth button {
+  margin-top: 0.5rem;
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.toggle-auth button:hover {
+  text-decoration: underline;
 }
