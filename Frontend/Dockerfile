@@ -1,8 +1,19 @@
-FROM node:20
+# Use an official Node.js runtime as a parent image
+FROM node:18-alpine
 WORKDIR /app
-COPY package*.json /app
-RUN npm install
-COPY . /app
-RUN npm run build
-CMD ["npm", "run","preview"]
 
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose the port the app runs on
+EXPOSE 5173
+
+# Command to run the Vite development server
+# This allows the app to be accessible from outside the container
+CMD ["npm", "run", "dev", "--", "--host"]

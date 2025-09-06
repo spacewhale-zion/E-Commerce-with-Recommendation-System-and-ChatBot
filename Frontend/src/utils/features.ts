@@ -1,3 +1,4 @@
+
 import { MessageResponse } from "../types/api-types";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 import { SerializedError } from "@reduxjs/toolkit";
@@ -53,9 +54,22 @@ export const getLastMonths = () => {
     last6Months,
   };
 };
-
-export const transformImage = (url: string, width = 200) => {
-  if (!url.includes("upload/")) return url; // Return original if no "upload/" found
-  return url.replace("upload/", `upload/dpr_auto/w_${width}/`);
+export const transformImage = (url: string, width: number=200) => {
+  // Check if the URL is a Cloudinary URL
+  if (url && url.includes("cloudinary")) {
+    return url;
+  }
+  // Check if it's a local path served by the backend
+  else if (url && url.startsWith("uploads/")) {
+    const serverBaseUrl = import.meta.env.VITE_SERVER || "http://localhost:4000";
+    return `${serverBaseUrl}/${url}`;
+  }
+  // Handle other external URLs
+  else if (url) {
+    return url;
+  }
+  // Provide a fallback for missing or invalid images
+  else {
+    return `https://placehold.co/${width}x${width}/png?text=No+Image`;
+  }
 };
-

@@ -207,24 +207,3 @@ export const getChartData = ({
   return data;
 };
 
-export const transformImage = (url: string, width = 200) => {
-  // Return a placeholder if the URL is missing
-  if (!url) return "https://placehold.co/200x200/f8fafc/e2e8f0?text=No+Image";
-
-  console.log("Transforming image URL:", url);
-  // Check if it's a Cloudinary URL and apply transformations
-  if (url.includes("cloudinary.com")) {
-    return url.replace("/upload/", `/upload/dpr_auto/w_${width}/`);
-  }
-
-  // Check if it's a local URL (e.g., starts with "uploads/") and prepend the server address
-  if (url.startsWith("uploads/")) {
-    // Define the server variable or import it from the appropriate module
-    const server = process.env.SERVER_URL || "http://localhost:5000";
-    
-        return `${server}/${url}`;
-  }
-
-  // If it's already a full URL (like from the seeder), return it as is
-  return url;
-};
