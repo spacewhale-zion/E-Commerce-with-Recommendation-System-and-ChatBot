@@ -1,14 +1,12 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   FaSearch,
   FaShoppingBag,
   FaSignInAlt,
   FaUser,
   FaSignOutAlt,
-  FaHome,
-  FaStore,
 } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { User } from "../types/types";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
@@ -20,99 +18,57 @@ interface PropsType {
 
 const Header = ({ user }: PropsType) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const location = useLocation();
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (isOpen && !(event.target as Element).closest('.user-menu')) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen]);
 
   const logoutHandler = async () => {
     try {
       await signOut(auth);
-      toast.success("Signed out successfully");
+      toast.success("Sign Out Successfully");
+      
       setIsOpen(false);
     } catch (error) {
-      toast.error("Sign out failed");
+      toast.error("Sign Out Fail");
     }
   };
 
-  const isActive = (path: string) => location.pathname === path;
-
   return (
     <nav className="header">
-      <div className="header-left">
-        <Link to="/" className="logo">
-          SHOPIFY
-        </Link>
-      </div>
+      <Link onClick={() => setIsOpen(false)} to={"/"}>
+        HOME
+      </Link>
+      <Link onClick={() => setIsOpen(false)} to={"/search"}>
+        <FaSearch />
+      </Link>
+      <Link onClick={() => setIsOpen(false)} to={"/cart"}>
+        <FaShoppingBag />
+      </Link>
 
-      <div className="header-center">
-        <Link 
-          to="/" 
-          className={isActive("/") ? "active" : ""}
-        >
-          <FaHome />
-          <span>Home</span>
-        </Link>
-        <Link 
-          to="/search" 
-          className={isActive("/search") ? "active" : ""}
-        >
-          <FaSearch />
-          <span>Search</span>
-        </Link>
-        <Link 
-          to="/cart" 
-          className={isActive("/cart") ? "active" : ""}
-        >
-          <FaShoppingBag />
-          <span>Cart</span>
-        </Link>
-      </div>
-
-      <div className="header-right">
-        {user?._id ? (
-          <div className="user-menu">
-            <button 
-              className="user-button"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              <FaUser />
-              <span>{user.name}</span>
-            </button>
-            
-            <div className={`user-dropdown ${isOpen ? 'open' : ''}`}>
+      {user?._id ? (
+        <>
+          <button onClick={() => setIsOpen((prev) => !prev)}>
+            <FaUser />
+          </button>
+          <dialog open={isOpen}>
+            <div>
               {user.role === "admin" && (
-                <Link to="/admin/dashboard" onClick={() => setIsOpen(false)}>
-                  <FaStore />
-                  <span>Admin Dashboard</span>
+                <Link onClick={() => setIsOpen(false)} to="/admin/dashboard">
+                  Admin
                 </Link>
               )}
-              <Link to="/orders" onClick={() => setIsOpen(false)}>
-                <FaShoppingBag />
-                <span>My Orders</span>
+
+              <Link onClick={() => setIsOpen(false)} to="/orders">
+                Orders
               </Link>
               <button onClick={logoutHandler}>
                 <FaSignOutAlt />
-                <span>Sign Out</span>
               </button>
             </div>
-          </div>
-        ) : (
-          <Link to="/login" className="login-btn">
-            <FaSignInAlt />
-            <span>Sign In</span>
-          </Link>
-        )}
-      </div>
+          </dialog>
+        </>
+      ) : (
+        <Link to={"/login"}>
+          <FaSignInAlt />
+        </Link>
+      )}
     </nav>
   );
 };

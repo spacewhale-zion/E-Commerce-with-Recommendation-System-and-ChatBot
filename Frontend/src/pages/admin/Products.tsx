@@ -10,6 +10,7 @@ import { Skeleton } from "../../components/Loader";
 import { useAllProductsQuery } from "../../redux/api/productAPI";
 import { RootState } from "../../redux/store";
 import { CustomError } from "../../types/api-types";
+import { transformImage } from "../../utils/features"; // Import the transform function
 
 interface DataType {
   photo: ReactElement;
@@ -59,7 +60,7 @@ const Products = () => {
     if (data)
       setRows(
         data.products.map((i) => ({
-          photo: <img src={i.photos?.[0]?.url} />,
+          photo: <img src={transformImage(i.photos?.[0]?.url)} />, // Use the transformImage function here
           name: i.name,
           price: i.price,
           stock: i.stock,

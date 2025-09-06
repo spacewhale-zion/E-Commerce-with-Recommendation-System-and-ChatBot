@@ -41,15 +41,12 @@ const ProductCard = ({
               quantity: 1,
             })
           }
-          title="Add to Cart"
         >
           <FaPlus />
-          <span>Add</span>
         </button>
 
-        <Link to={`/product/${productId}`} title="View Details">
+        <Link to={`/product/${productId}`}>
           <FaExpandAlt />
-          <span>View</span>
         </Link>
       </div>
     </div>
