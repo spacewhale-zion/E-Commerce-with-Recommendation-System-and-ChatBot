@@ -1,7 +1,16 @@
+// Modern Color Palette
+$color1: #ffffff;
+$color2: #1a1a1a;
+$color3: #3b82f6;
+$color4: #f8fafc;
+$color5: #64748b;
+$color6: #e2e8f0;
+$color7: #0f172a;
+$color8: #f1f5f9;
+$color9: #10b981;
+$color10: #ef4444;
 
-$color1: white;
-$color2: rgb(46, 46, 46);
-$color3: rgb(0, 104, 136);
+// Import existing styles
 @import "admin-styles/mixin";
 @import "home";
 @import "cart";
@@ -16,11 +25,31 @@ $color3: rgb(0, 104, 136);
 @import "admin-styles/dashboardapp";
 @import "admin-styles/mediaquery";
 
-
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  line-height: 1.6;
   font-weight: 400;
+  color-scheme: light;
+  
+  // CSS Custom Properties for consistent spacing
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  // Border radius
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  
+  // Shadows
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
 * {
@@ -31,148 +60,186 @@ $color3: rgb(0, 104, 136);
 
 body {
   user-select: none;
+  background-color: $color4;
+  color: $color2;
+  font-size: 16px;
+  line-height: 1.6;
 }
 
 a {
   text-decoration: none;
-  color: black;
+  color: inherit;
+  transition: all 0.2s ease;
 }
 
 button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  
   &:disabled {
     cursor: not-allowed !important;
     opacity: 0.5;
   }
 }
 
-$color1: white;
-$color2: rgb(46, 46, 46);
-$color3: rgb(0, 104, 136);
+input, select, textarea {
+  font-family: inherit;
+  border: 1px solid $color6;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  transition: all 0.2s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $color3;
+    box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+  }
+}
 
-.red {
-  color: red;
-}
-.purple {
-  color: rgb(47, 0, 255);
-}
-.green {
-  color: rgb(0, 195, 0);
-}
+// Utility Classes
+.red { color: $color10; }
+.purple { color: #8b5cf6; }
+.green { color: $color9; }
+.blue { color: $color3; }
 
 .container {
   max-width: 1367px;
   width: 100%;
   margin: auto;
   overflow: auto;
+  padding: 0 var(--spacing-md);
+  
   > h1 {
     @include heading;
-    margin: 1rem 0;
+    margin: var(--spacing-lg) 0;
     text-align: left;
   }
 }
 
 .heading {
   @include heading;
-  margin: 1rem 0;
+  margin: var(--spacing-lg) 0;
   text-align: center;
+  color: $color7;
+  font-weight: 700;
 }
 
+// Enhanced Header
 .header {
-  z-index: 2;
-  @include flex(row, flex-end, stretch, 1.2rem);
-  padding: 1rem;
-  a {
-    color: $color2;
-    letter-spacing: 2px;
-    font-size: 1.2rem;
-
-    &:hover {
+  z-index: 100;
+  @include flex(row, space-between, center, var(--spacing-lg));
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid $color6;
+  position: sticky;
+  top: 0;
+  
+  .header-left {
+    @include flex(row, flex-start, center, var(--spacing-lg));
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
       color: $color3;
+      letter-spacing: -0.025em;
     }
   }
-
-  button {
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    background-color: transparent;
-    &:hover {
-      color: $color3;
-    }
-  }
-
-  dialog {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    width: 100px;
-    position: absolute;
-    left: calc(100% - 100px);
-    top: 8%;
-    > div {
-      @include flex(column, flex-start, center, 0.25rem);
-    }
-  }
-}
-
-.not-found {
-  height: 80vh;
-  @include flex(column);
-  > svg {
-    font-size: 5rem;
-  }
-}
-
-.checkout-container {
-  height: 80vh;
-  width: 100%;
-  margin: auto;
-  @include flex;
-
-  > form {
-    @include flex(column, flex-start, stretch, 2rem);
-    max-width: 400px;
-    box-shadow: 0 0 10px rgb(0 0 0 / 10%);
-    padding: 4rem;
-    border-radius: 6px;
-    > button {
-      @include btn(1rem, $color3, $color1);
-      width: 100%;
-      font-size: 1.1rem;
-    }
-  }
-}
-
-.admin-container {
-  @include grid(1fr 4fr, 2rem);
-  height: 100vh;
-  background-color: rgb(247, 247, 247);
-  > aside {
-    width: 100%;
-    background-color: white;
-    padding: 1rem;
-    z-index: 10;
-    overflow-y: auto;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-
-    > div {
-      margin: 2rem 1rem;
-      > h5 {
-        @include heading(2px);
-        opacity: 0.8;
-        margin: 1rem 0;
+  
+  .header-center {
+    @include flex(row, center, center, var(--spacing-xl));
+    
+    a {
+      color: $color5;
+      font-weight: 500;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--radius-md);
+      transition: all 0.2s ease;
+      
+      &:hover {
+        color: $color3;
+        background-color: $color8;
       }
-      > ul {
-        @include flex(column, unset, unset, 0.5rem);
-        list-style: none;
-        > li {
-          padding: 0.5rem 1rem;
-          border-radius: 10px;
-          a {
-            color: rgba(0, 0, 0, 0.825);
-            @include flex(row, unset);
+      
+      &.active {
+        color: $color3;
+        background-color: rgb(59 130 246 / 0.1);
+      }
+    }
+  }
+  
+  .header-right {
+    @include flex(row, flex-end, center, var(--spacing-md));
+    
+    a, button {
+      color: $color5;
+      font-weight: 500;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--radius-md);
+      transition: all 0.2s ease;
+      
+      &:hover {
+        color: $color3;
+        background-color: $color8;
+      }
+    }
+    
+    .user-menu {
+      position: relative;
+      
+      .user-button {
+        @include flex(row, center, center, var(--spacing-sm));
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--radius-md);
+        background-color: $color8;
+        color: $color5;
+        
+        &:hover {
+          background-color: $color6;
+        }
+      }
+      
+      .user-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: var(--spacing-sm);
+        background: white;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-xl);
+        border: 1px solid $color6;
+        min-width: 200px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.2s ease;
+        
+        &.open {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0);
+        }
+        
+        a, button {
+          display: block;
+          width: 100%;
+          text-align: left;
+          padding: var(--spacing-md);
+          border: none;
+          background: none;
+          color: $color5;
+          border-bottom: 1px solid $color6;
+          
+          &:last-child {
+            border-bottom: none;
+          }
+          
+          &:hover {
+            background-color: $color8;
+            color: $color3;
           }
         }
       }
@@ -180,45 +247,194 @@ $color3: rgb(0, 104, 136);
   }
 }
 
+// Enhanced Not Found
+.not-found {
+  height: 80vh;
+  @include flex(column);
+  
+  > svg {
+    font-size: 5rem;
+    color: $color5;
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  h1 {
+    color: $color7;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  p {
+    color: $color5;
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  a {
+    color: $color3;
+    font-weight: 500;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// Enhanced Checkout Container
+.checkout-container {
+  height: 80vh;
+  width: 100%;
+  margin: auto;
+  @include flex;
+
+  > form {
+    @include flex(column, flex-start, stretch, var(--spacing-xl));
+    max-width: 400px;
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-2xl);
+    border-radius: var(--radius-lg);
+    background: white;
+    
+    > button {
+      @include btn(1rem, $color3, $color1);
+      width: 100%;
+      font-size: 1.1rem;
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-lg);
+      }
+    }
+  }
+}
+
+// Enhanced Admin Container
+.admin-container {
+  @include grid(1fr 4fr, var(--spacing-xl));
+  height: 100vh;
+  background-color: $color4;
+  
+  > aside {
+    width: 100%;
+    background-color: white;
+    padding: var(--spacing-lg);
+    z-index: 10;
+    overflow-y: auto;
+    border-right: 1px solid $color6;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    > div {
+      margin: var(--spacing-xl) var(--spacing-md);
+      
+      > h5 {
+        @include heading(2px);
+        opacity: 0.8;
+        margin: var(--spacing-lg) 0;
+        color: $color5;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      
+      > ul {
+        @include flex(column, unset, unset, var(--spacing-sm));
+        list-style: none;
+        
+        > li {
+          padding: var(--spacing-sm) var(--spacing-md);
+          border-radius: var(--radius-md);
+          transition: all 0.2s ease;
+          
+          &:hover {
+            background-color: $color8;
+          }
+          
+          a {
+            color: $color5;
+            @include flex(row, unset);
+            font-weight: 500;
+            
+            &:hover {
+              color: $color3;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Enhanced Table
 .table {
   border-collapse: collapse;
   width: 100%;
+  background: white;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  
   th,
   td {
-    padding: 8px;
+    padding: var(--spacing-md);
     text-align: left;
     vertical-align: middle;
   }
 
   th {
-    font-weight: bold;
-    color: #0000009e;
-    font-size: 1.1rem;
-    font-weight: 400;
-    padding: 2rem 1rem;
+    font-weight: 600;
+    color: $color7;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: var(--spacing-lg) var(--spacing-md);
+    background-color: $color8;
+    border-bottom: 1px solid $color6;
   }
 
   tbody {
     tr {
-      box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.093);
+      border-bottom: 1px solid $color6;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: $color4;
+      }
+      
+      &:last-child {
+        border-bottom: none;
+      }
     }
 
     td {
-      padding: 1rem;
+      padding: var(--spacing-lg);
 
       img {
         width: 4rem;
         height: 4rem;
         object-fit: contain;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
+        border: 1px solid $color6;
       }
+      
       a {
         text-decoration: none;
-        background-color: rgba(44, 104, 255, 0.455);
-        color: rgba(44, 104, 255);
-        padding: 0.25rem 0.5rem;
-        border-radius: 10px;
+        background-color: rgb(59 130 246 / 0.1);
+        color: $color3;
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--radius-md);
+        font-size: 0.875rem;
+        font-weight: 500;
+        
+        &:hover {
+          background-color: rgb(59 130 246 / 0.2);
+        }
       }
+      
       button {
         width: 2rem;
         height: 2rem;
@@ -227,41 +443,49 @@ $color3: rgb(0, 104, 136);
         outline: none;
         background-color: transparent;
         cursor: pointer;
-        color: rgb(255, 44, 44);
+        color: $color10;
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
+        
         &:hover {
-          opacity: 0.6;
+          background-color: rgb(239 68 68 / 0.1);
         }
       }
-
-      &:first-child {
-        border-left: none;
-      }
-
-      &:last-child {
-        border-right: none;
-      }
     }
   }
 }
 
+// Enhanced Table Pagination
 .table-pagination {
   @include flex;
-  padding: 2rem;
+  padding: var(--spacing-xl);
+  gap: var(--spacing-md);
+  
   > button {
-    padding: 0.5rem 1rem;
+    padding: var(--spacing-sm) var(--spacing-md);
     border: none;
     outline: none;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    background-color: rgba(0, 115, 255);
+    background-color: $color3;
     color: white;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    
+    &:hover:not(:disabled) {
+      background-color: #2563eb;
+      transform: translateY(-1px);
+    }
+    
     &:disabled {
-      background-color: rgba(0, 115, 255, 0.1);
+      background-color: $color6;
       cursor: not-allowed;
+      color: $color5;
     }
   }
 }
 
+// Enhanced Hamburger Menu
 #hamburger {
   display: grid;
   place-items: center;
@@ -269,7 +493,7 @@ $color3: rgb(0, 104, 136);
   border: none;
   outline: none;
   cursor: pointer;
-  color: rgba(44, 104, 255);
+  color: $color3;
   position: fixed;
   top: 1rem;
   left: 1rem;
@@ -277,69 +501,100 @@ $color3: rgb(0, 104, 136);
   background-color: white;
   border-radius: 50%;
   z-index: 9;
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-lg);
+  }
 }
 
 #close-sidebar {
   width: 80%;
-  margin: 1rem auto;
+  margin: var(--spacing-md) auto;
   display: block;
-  padding: 0.75rem;
+  padding: var(--spacing-sm);
   border: none;
   outline: none;
   cursor: pointer;
-  background-color: rgb(168, 2, 2);
+  background-color: $color10;
   color: white;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #dc2626;
+  }
 }
 
+// Enhanced Loader
 .loader {
   width: 100%;
   height: 85vh;
   @include flex;
+  
   > div {
     @include square(10rem);
     border-radius: 50%;
-    border-top: 1rem solid rgb(43, 43, 43);
-    border-left: 1rem solid rgb(43, 43, 43);
-    border-right: 1rem solid #fff;
-    border-bottom: 1rem solid #fff;
+    border-top: 1rem solid $color3;
+    border-left: 1rem solid $color3;
+    border-right: 1rem solid $color6;
+    border-bottom: 1rem solid $color6;
     animation: loading-animation 0.5s linear infinite;
   }
 }
 
+// Enhanced Skeleton Loader
 .skeleton-loader {
   display: flex;
   flex-direction: column;
+  gap: var(--spacing-sm);
 }
 
 .skeleton-shape {
   height: 30px;
   width: 100%;
-  background-color: #ddd;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  animation: skeleon-loading 1.5s infinite;
+  background: linear-gradient(90deg, $color6 25%, $color8 50%, $color6 75%);
+  background-size: 200% 100%;
+  border-radius: var(--radius-sm);
+  animation: skeleton-loading 1.5s infinite;
 }
 
+// Enhanced Animations
 @keyframes loading-animation {
   to {
     transform: rotateZ(360deg);
   }
 }
+
 @keyframes up-and-down {
   to {
     transform: translate(-50%, -20%);
   }
 }
 
-@keyframes skeleon-loading {
+@keyframes skeleton-loading {
   0% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
+    background-position: 200% 0;
   }
   100% {
-    opacity: 0.6;
+    background-position: -200% 0;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .header {
+    padding: var(--spacing-md);
+    
+    .header-center {
+      display: none;
+    }
+  }
+  
+  .container {
+    padding: 0 var(--spacing-sm);
   }
 }

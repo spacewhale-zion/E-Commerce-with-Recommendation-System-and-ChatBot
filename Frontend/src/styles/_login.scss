@@ -1,165 +1,296 @@
 .login {
-  height: 90vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.login > main {
   width: 100%;
-  height: 100%;
-  max-width: 400px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: stretch;
-  background-color: #fff;
-  border-radius: 8px;
+  height: 100vh;
+  @include flex;
+  background: linear-gradient(135deg, $color4 0%, white 100%);
+
+  > main {
+    width: 100%;
+    max-width: 400px;
+    padding: var(--spacing-2xl);
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid $color6;
+
+    h1 {
+      text-align: center;
+      color: $color7;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-xl);
+    }
+
+    > div {
+      @include flex(column, flex-start, stretch, var(--spacing-sm));
+      margin-bottom: var(--spacing-lg);
+
+      label {
+        font-weight: 600;
+        color: $color7;
+        margin-bottom: var(--spacing-xs);
+        font-size: 0.875rem;
+      }
+
+      input,
+      select {
+        padding: var(--spacing-md);
+        border: 2px solid $color6;
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        background-color: white;
+
+        &:focus {
+          border-color: $color3;
+          box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+          outline: none;
+        }
+
+        &:hover {
+          border-color: $color5;
+        }
+      }
+
+      select {
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right var(--spacing-sm) center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: var(--spacing-xl);
+        appearance: none;
+      }
+    }
+
+    .login-email-btn {
+      width: 100%;
+      background: $color3;
+      color: white;
+      padding: var(--spacing-md);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: var(--spacing-lg);
+
+      &:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    .toggle-auth {
+      text-align: center;
+      color: $color5;
+      margin-bottom: var(--spacing-lg);
+      font-size: 0.875rem;
+
+      button {
+        background: none;
+        border: none;
+        color: $color3;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: underline;
+        margin-left: var(--spacing-xs);
+
+        &:hover {
+          color: #2563eb;
+        }
+      }
+    }
+
+    > div:last-child {
+      @include flex(column, center, center, var(--spacing-md));
+
+      p {
+        color: $color5;
+        font-size: 0.875rem;
+        position: relative;
+        margin: var(--spacing-lg) 0;
+
+        &::before,
+        &::after {
+          content: "";
+          position: absolute;
+          top: 50%;
+          width: 30%;
+          height: 1px;
+          background-color: $color6;
+        }
+
+        &::before {
+          left: -35%;
+        }
+
+        &::after {
+          right: -35%;
+        }
+      }
+
+      button {
+        width: 100%;
+        @include flex(row, center, center, var(--spacing-md));
+        background: white;
+        color: $color7;
+        padding: var(--spacing-md);
+        border: 2px solid $color6;
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: $color3;
+          background-color: $color8;
+          transform: translateY(-1px);
+          box-shadow: var(--shadow-md);
+        }
+
+        svg {
+          font-size: 1.2rem;
+        }
+
+        span {
+          font-weight: 600;
+        }
+      }
+    }
+  }
 }
 
-.login > main > div {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  margin-top: 1rem;
-}
-.login > main > div > p {
-  width: 100%;
-  text-align: center;
-  margin: 1.5rem 0;
-  position: relative;
-  color: #666;
-  font-size: 0.9rem;
-  font-weight: 500;
+// Enhanced form validation states
+.login form {
+  .form-group {
+    position: relative;
+    margin-bottom: var(--spacing-lg);
+
+    &.error {
+      input,
+      select {
+        border-color: $color10;
+        
+        &:focus {
+          box-shadow: 0 0 0 3px rgb(239 68 68 / 0.1);
+        }
+      }
+
+      .error-message {
+        color: $color10;
+        font-size: 0.75rem;
+        margin-top: var(--spacing-xs);
+        display: block;
+      }
+    }
+
+    &.success {
+      input,
+      select {
+        border-color: $color9;
+        
+        &:focus {
+          box-shadow: 0 0 0 3px rgb(16 185 129 / 0.1);
+        }
+      }
+    }
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: var(--spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: $color5;
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: $color7;
+      background-color: $color8;
+    }
+  }
 }
 
-.login > main > div > p::before,
-.login > main > div > p::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 40%;
-  height: 1px;
-  background-color: #ccc;
+// Enhanced responsive design
+@media (max-width: 768px) {
+  .login {
+    padding: var(--spacing-md);
+
+    > main {
+      padding: var(--spacing-xl);
+      margin: var(--spacing-md);
+      max-width: 100%;
+
+      h1 {
+        font-size: 1.75rem;
+      }
+
+      > div {
+        margin-bottom: var(--spacing-md);
+
+        input,
+        select {
+          padding: var(--spacing-sm) var(--spacing-md);
+        }
+      }
+
+      .login-email-btn {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: 1rem;
+      }
+    }
+  }
 }
 
-.login > main > div > p::before {
-  left: 0;
+// Enhanced animations
+.login {
+  > main {
+    animation: slideUp 0.5s ease-out;
+
+    .form-group {
+      animation: fadeIn 0.5s ease-out;
+      animation-fill-mode: both;
+
+      @for $i from 1 through 5 {
+        &:nth-child(#{$i}) {
+          animation-delay: #{$i * 0.1}s;
+        }
+      }
+    }
+  }
 }
 
-.login > main > div > p::after {
-  right: 0;
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.login > main input,
-.login > main select {
-  width: 100%;
-  padding: 0.6rem 1rem;
-  border: 1px solid rgba(162, 162, 162, 0.53);
-  border-radius: 5px;
-  font-size: 1rem;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: white;
-  box-sizing: border-box;
-  transition: border 0.3s ease;
-}
-
-.login > main input:focus,
-.login > main select:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
-}
-
-.login > main label {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-  font-size: 0.95rem;
-}
-
-.login > main > div > p {
-  text-align: center;
-  margin: 2rem 0;
-}
-
-.login > main button {
-  width: 70%;
-  margin: 1rem auto;
-  height: 3rem;
-  background-color: rgb(62, 125, 242);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgb(62, 125, 242);
-  border-radius: 5px;
-  font-size: 1.05rem;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
-  cursor: pointer;
-}
-
-.login > main button:hover {
-  background-color: rgb(50, 100, 200);
-}
-
-.login > main button > svg {
-  background-color: white;
-  width: 30%;
-  height: 100%;
-  padding: 0.5rem;
-}
-
-.login > main button > span {
-  width: 100%;
-  text-align: center;
-}
-
-.login .login-email-btn {
-  margin-top: 1rem;
-  width: 100%;
-  background-color: #2563eb;
-  color: #ffffff;
-  font-weight: 600;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  border: none;
-  font-size: 1rem;
-  transition: background-color 0.2s ease;
-}
-
-.login .login-email-btn:hover {
-  background-color: #1d4ed8;
-  cursor: pointer;
-}
-
-.login .login-email-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
-}
-
-.toggle-auth {
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.toggle-auth button {
-  margin-top: 0.5rem;
-  background: none;
-  border: none;
-  color: #2563eb;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 0.95rem;
-}
-
-.toggle-auth button:hover {
-  text-decoration: underline;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
